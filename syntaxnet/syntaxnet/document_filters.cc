@@ -110,7 +110,7 @@ class DocumentSource : public OpKernel {
 
       vec_reader.reset(new TextReader(*task_context_.GetInput(corpus_name_),
               &task_context_,
-				      strings));
+				      std::move(strings)));
     }
 
     TextReader *reader = (documents_from_input_) ?
