@@ -95,8 +95,9 @@ class TextFormatsTest(test_util.TensorFlowTestCase):
     logging.info('Writing text file to: %s', self.corpus_file)
     with open(self.corpus_file, 'w') as f:
       f.write(sentence)
+    unused_text_input = tf.constant([], tf.string)
     sentence, _ = gen_parser_ops.document_source(
-        self.context_file, batch_size=1)
+        text=unused_text_input, self.context_file, batch_size=1)
     with self.test_session() as sess:
       sentence_doc = self.ReadNextDocument(sess, sentence)
       self.assertEqual(len(sentence_doc.token), len(words))
@@ -146,8 +147,9 @@ class TextFormatsTest(test_util.TensorFlowTestCase):
       f.write(''.join(doc_lines))
 
     # Test converted sentence.
+    unused_text_input = tf.constant([], tf.string)
     sentence, _ = gen_parser_ops.document_source(
-        self.context_file, batch_size=1)
+        text=unused_text_input, self.context_file, batch_size=1)
     with self.test_session() as sess:
       sentence_doc = self.ReadNextDocument(sess, sentence)
       self.assertEqual(doc_text.decode('utf-8'), sentence_doc.text)
