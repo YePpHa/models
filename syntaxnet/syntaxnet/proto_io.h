@@ -32,7 +32,6 @@ limitations under the License.
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/lib/core/stringpiece.h"
-#include "tensorflow/core/lib/io/inputbuffer.h"
 #include "tensorflow/core/lib/io/buffered_inputstream.h"
 #include "tensorflow/core/lib/io/random_inputstream.h"
 #include "tensorflow/core/lib/io/record_reader.h"
@@ -243,7 +242,7 @@ class TextReader {
     if (feed_text_ != nullptr) {
       static const int kInputBufferSize = 8 * 1024; /* bytes */
       file_.reset(new VectorIn(std::move(feed_text_)));
-      buffer_.reset(new tensorflow::io::InputBuffer(file_.get(), kInputBufferSize));
+      buffer_.reset(new tensorflow::io::BufferedInputStream(file_.get(), kInputBufferSize));
     } else if (filename_ == "-") {
       static const int kInputBufferSize = 8 * 1024; /* bytes */
       file_.reset(new StdIn());
