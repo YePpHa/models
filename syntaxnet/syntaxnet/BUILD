@@ -661,7 +661,7 @@ py_binary(
         ":graph_builder",
         ":sentence_py_pb2",
         ":structured_graph_builder",
-	":parser_eval",
+        ":parser_eval",
     ],
 )
 

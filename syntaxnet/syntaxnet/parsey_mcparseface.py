@@ -7,11 +7,12 @@ from tensorflow.python.platform import tf_logging as logging
 from syntaxnet import parser_eval
 from syntaxnet.ops import gen_parser_ops
 from syntaxnet import structured_graph_builder
-from tensorflow_serving.session_bundle import exporter
+from tensorflow.contrib.session_bundle import exporter
 
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 
+flags.DEFINE_string('model_dir', None, 'Path to the model directory')
 flags.DEFINE_string('export_path', None, 'Path to export to intstead of running the model.')
 
 def Build(sess, document_source, FLAGS):
@@ -111,7 +112,7 @@ def ExportModel(sess, model_dir, input, output, assets):
 def main(unused_argv):
   logging.set_verbosity(logging.INFO)
 
-  model_dir="syntaxnet/models/parsey_mcparseface"
+  model_dir=FLAGS.model_dir
   task_context="%s/context.pbtxt" % model_dir
 
   common_params = {
@@ -124,6 +125,14 @@ def main(unused_argv):
       }
 
   model = {
+        "brain_morpher": {
+            "arg_prefix":         "brain_morpher",
+            "hidden_layer_sizes": "64",
+            # input is taken from input tensor, not from corpus
+            "input":              None,
+            "model_path":         "%s/morpher-params" % model_dir,
+
+            },
       	"brain_tagger": {
             "arg_prefix":         "brain_tagger",
             "hidden_layer_sizes": "64",
@@ -141,7 +150,7 @@ def main(unused_argv):
             },
       }
 
-  for prefix in ["brain_tagger","brain_parser"]:
+  for prefix in ["brain_morpher","brain_tagger","brain_parser"]:
       model[prefix].update(common_params)
       feature_sizes, domain_sizes, embedding_dims, num_actions = GetFeatureSize(task_context, prefix)
       model[prefix].update({'feature_sizes': feature_sizes,
@@ -164,14 +173,16 @@ def main(unused_argv):
                                                        batch_size=common_params['batch_size'],
 					                                             documents_from_input=True)
 
-      for prefix in ["brain_tagger","brain_parser"]:
+      prev_prefix = None
+      for prefix in ["brain_morpher","brain_tagger","brain_parser"]:
           with tf.variable_scope(prefix):
-              if True or prefix == "brain_tagger":
-                  source = document_source.documents if prefix == "brain_tagger" else model["brain_tagger"]["documents"]
+              if True or prev_prefix is None:
+                  source = document_source.documents if prev_prefix is None else model[prev_prefix]["documents"]
                   model[prefix]["documents"] = Build(sess, source, model[prefix])
+          prev_prefix = prefix
 
       if FLAGS.export_path is None:
-          sink = gen_parser_ops.document_sink(model["brain_parser"]["documents"],
+          sink = gen_parser_ops.document_sink(model[prev_prefix]["documents"],
                                       task_context=task_context,
                                       corpus_name="stdout-conll")
           sess.run(sink)
@@ -181,7 +192,7 @@ def main(unused_argv):
               path = os.path.join(model_dir, model_file)
               if not os.path.isdir(path):
                 assets.append(tf.constant(path))
-          ExportModel(sess, FLAGS.export_path, text_input, model["brain_parser"]["documents"], assets)
+          ExportModel(sess, FLAGS.export_path, text_input, model[prev_prefix]["documents"], assets)
 
 if __name__ == '__main__':
   tf.app.run()
