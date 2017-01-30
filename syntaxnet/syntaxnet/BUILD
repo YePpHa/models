@@ -431,6 +431,7 @@ cc_library(
 cc_library(
     name = "parser_ops_cc",
     srcs = ["ops/parser_ops.cc"],
+    visibility = ["//visibility:public"],
     deps = [
         ":base",
         ":document_filters",
@@ -650,6 +651,17 @@ py_binary(
         ":sentence_py_pb2",
         ":structured_graph_builder",
         ":task_spec_py_pb2",
+    ],
+)
+
+py_binary(
+    name = "parsey_mcparseface",
+    srcs = ["parsey_mcparseface.py"],
+    deps = [
+        ":graph_builder",
+        ":sentence_py_pb2",
+        ":structured_graph_builder",
+	":parser_eval",
     ],
 )
 

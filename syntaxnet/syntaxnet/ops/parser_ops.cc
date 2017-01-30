@@ -72,6 +72,7 @@ arg_prefix: prefix for context parameters.
 )doc");
 
 REGISTER_OP("BeamParseReader")
+    .Input("documents: string")
     .Output("features: feature_size * string")
     .Output("beam_state: int64")
     .Output("num_epochs: int32")
@@ -84,10 +85,13 @@ REGISTER_OP("BeamParseReader")
     .Attr("arg_prefix: string='brain_parser'")
     .Attr("continue_until_all_final: bool=false")
     .Attr("always_start_new_sentences: bool=false")
+    .Attr("documents_from_input: bool=false")
     .SetIsStateful()
     .Doc(R"doc(
 Reads sentences and creates a beam parser.
 
+documents: A vector of documents (Sentence) as serialized protos.
+           If empty, the documents will be read from the corpus named below.
 features: features firing at the initial parser state encoded as
           dist_belief.SparseFeatures protocol buffers.
 beam_state: beam state handle.
@@ -102,6 +106,8 @@ continue_until_all_final: whether to continue parsing after the gold path falls
                           off the beam.
 always_start_new_sentences: whether to skip to the beginning of a new sentence
                             after each training step.
+documents_from_input: whether to read documents from the documents input Tensor (true)
+                      or from the corpus defined by task_context and corpus_name (false)
 )doc");
 
 REGISTER_OP("BeamParser")
@@ -229,18 +235,23 @@ task_context: file path at which to read the task context.
 )doc");
 
 REGISTER_OP("DocumentSource")
+    .Input("text: string")
     .Output("documents: string")
     .Output("last: bool")
     .Attr("task_context: string")
     .Attr("corpus_name: string='documents'")
     .Attr("batch_size: int")
+    .Attr("documents_from_input: bool=false")
     .SetIsStateful()
     .Doc(R"doc(
 Reads documents from documents_path and outputs them.
 
+text: a vector of strings (matching the DocumentFormat as per corpus definition)
 documents: a vector of documents as serialized protos.
 last: whether this is the last batch of documents from this document path.
 batch_size: how many documents to read at once.
+documents_from_input: whether to read text from the next input Tensor (true)
+                      or from the corpus defined by task_context and corpus_name (false)
 )doc");
 
 REGISTER_OP("DocumentSink")
