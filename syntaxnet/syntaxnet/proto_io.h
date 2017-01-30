@@ -32,6 +32,7 @@ limitations under the License.
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/lib/core/stringpiece.h"
+#include "tensorflow/core/lib/io/inputbuffer.h"
 #include "tensorflow/core/lib/io/buffered_inputstream.h"
 #include "tensorflow/core/lib/io/random_inputstream.h"
 #include "tensorflow/core/lib/io/record_reader.h"
