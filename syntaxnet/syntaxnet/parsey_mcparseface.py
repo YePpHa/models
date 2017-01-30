@@ -102,7 +102,7 @@ def ExportModel(sess, model_dir, input, output, assets):
   model_exporter.export(model_dir, tf.constant(1), sess)
 
   # using a SummaryWriter so graph can be loaded in TensorBoard
-  writer = tf.train.SummaryWriter(model_dir, sess.graph)
+  writer = tf.summary.SummaryWriter(model_dir, sess.graph)
   writer.flush()
 
   # exporting the graph as a text protobuf, to view graph manualy
