@@ -132,6 +132,28 @@ away with Parsey McParseface, located under `syntaxnet/models`. The easiest
 thing is to use or modify the included script `syntaxnet/demo.sh`, which shows a
 basic setup to parse English taking plain text as input.
 
+### Exporting Model for use in TensorFlow Serving
+Use either Parsey McParseface or Parsey's cousins. If using parsey's cousings
+download the pretrained syntactic model you want to use (you can train it
+  yourself if the one you want to use is not available).
+
+For Parsey's cousins you need to copy
+`syntaxnet/models/parsey_universal/context.pbtxt` to the folder where the model
+is located. Make sure to fix the references to the model files in
+`context.pbtxt`. So that you can call them from the root of the syntaxnet model
+(the tensorflow model, not the syntactic model).
+
+Once you completed the steps above, you can export the model with the following
+command:
+
+```shell
+  bazel-bin/syntaxnet/parsey_mcparseface --model_dir <PATH TO THE SYNTACTIC MODEL> --export_path <PATH TO EXPORT FILES>
+```
+
+**Note:** `<PATH TO THE SYNTACTIC MODEL>` should be replaced by the path of the
+syntactic model. `<PATH TO EXPORT FILES>` should be replaced by where you want
+the exported files to be located.
+
 ### Parsing from Standard Input
 
 Simply pass one sentence per line of text into the script at
