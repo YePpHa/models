@@ -28,11 +28,13 @@ tf_proto_library(
 tf_proto_library(
     name = "sentence_proto",
     srcs = ["sentence.proto"],
+    visibility = ["//visibility:public"],
 )
 
 tf_proto_library_py(
     name = "sentence_py_pb2",
     srcs = ["sentence.proto"],
+    visibility = ["//visibility:public"],
 )
 
 tf_proto_library(
