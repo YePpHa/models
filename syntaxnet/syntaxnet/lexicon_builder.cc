@@ -18,6 +18,7 @@ limitations under the License.
 
 #include "syntaxnet/affix.h"
 #include "syntaxnet/dictionary.pb.h"
+#include "syntaxnet/morphology_label_set.h"
 #include "syntaxnet/feature_extractor.h"
 #include "syntaxnet/segmenter_utils.h"
 #include "syntaxnet/sentence.pb.h"
@@ -27,6 +28,7 @@ limitations under the License.
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/platform/env.h"
+#include "syntaxnet/segmenter_utils.h"
 
 // A task that collects term statistics over a corpus and saves a set of
 // term maps; these saved mappings are used to map strings to ints in both the
@@ -77,6 +79,11 @@ class LexiconBuilder : public OpKernel {
     TermFrequencyMap categories;
     TermFrequencyMap labels;
     TermFrequencyMap chars;
+    TermFrequencyMap morphs;
+    MorphologyLabelSet morph_label_set;
+    TermFrequencyMap char_ngram_map;
+    int max_char_ngram_length = task_context_.Get("lexicon_max_char_ngram_length", 3);
+    bool use_terminators = task_context_.Get("lexicon_char_ngram_include_terminators", false);
 
     // Affix tables to be populated by the corpus.
     AffixTable prefixes(AffixTable::PREFIX, max_prefix_length_);
@@ -123,6 +130,33 @@ class LexiconBuilder : public OpKernel {
           const string c_str = c.ToString();
           if (!c_str.empty() && !HasSpaces(c_str)) chars.Increment(c_str);
         }
+        
+        const TokenMorphology &token_morphology = token.GetExtension(TokenMorphology::morphology);
+        for (const TokenMorphology::Attribute &att : token_morphology.attribute()) {
+          morphs.Increment(tensorflow::strings::StrCat(att.name(), "=", att.value()));
+        }
+
+        // Only add non-empty morphologies
+        if (token_morphology.attribute_size() > 0)
+          morph_label_set.Add(token_morphology);
+
+        //Char-ngram generation below
+        vector<tensorflow::StringPiece> char_spN;
+        if (use_terminators) char_spN.push_back("^");
+        SegmenterUtils::GetUTF8Chars(token.word(), &char_spN);
+        if (use_terminators) char_spN.push_back("$");
+        for (int start = 0; start < char_spN.size(); ++start) {
+          string char_ngram;
+          for (int index = 0;
+               index < max_char_ngram_length && start + index < char_spN.size();
+               ++index) {
+            tensorflow::StringPiece c = char_spN[start + index];
+            if (c == " ") break;  // Never add char ngrams containing spaces.
+            tensorflow::strings::StrAppend(&char_ngram, c);
+
+            char_ngram_map.Increment(char_ngram);
+          }
+        }
 
         // Update the number of processed tokens.
         ++num_tokens;
@@ -142,6 +176,9 @@ class LexiconBuilder : public OpKernel {
         TaskContext::InputFile(*task_context_.GetInput("category-map")));
     labels.Save(TaskContext::InputFile(*task_context_.GetInput("label-map")));
     chars.Save(TaskContext::InputFile(*task_context_.GetInput("char-map")));
+    morphs.Save(TaskContext::InputFile(*task_context_.GetInput("morphology-map")));
+    morph_label_set.Write(TaskContext::InputFile(*task_context_.GetInput("morph-label-set")));
+    char_ngram_map.Save(TaskContext::InputFile(*task_context_.GetInput("char-ngram-map")));
 
     // Write affixes to disk.
     WriteAffixTable(prefixes, TaskContext::InputFile(
