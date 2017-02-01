@@ -417,7 +417,6 @@ cc_library(
         ":sentence_proto",
         ":task_context",
         ":text_formats",
-        ":segmenter_utils",
     ],
     alwayslink = 1,
 )
