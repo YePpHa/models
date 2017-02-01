@@ -408,6 +408,7 @@ cc_library(
     name = "lexicon_builder",
     srcs = ["lexicon_builder.cc"],
     deps = [
+        ":morphology_label_set",
         ":dictionary_proto",
         ":document_format",
         ":parser_transitions",
@@ -416,6 +417,7 @@ cc_library(
         ":sentence_proto",
         ":task_context",
         ":text_formats",
+        ":segmenter_utils",
     ],
     alwayslink = 1,
 )
