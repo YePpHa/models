@@ -85,6 +85,24 @@ input {
   }
 }
 input {
+  name: "morph-label-set"
+  Part {
+    file_pattern: "OUTPATH/morph-label-set"
+  }
+}
+input {
+  name: "morphology-map"
+  Part {
+    file_pattern: "OUTPATH/morphology-map"
+  }
+}
+input {
+  name: "char-ngram-map"
+  Part {
+    file_pattern: "OUTPATH/char-ngram-map"
+  }
+}
+input {
   name: 'stdout'
   record_format: 'conll-sentence'
   Part {
