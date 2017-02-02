@@ -94,7 +94,8 @@ class LexiconBuilderTest(test_util.TensorFlowTestCase):
     self.AddInput('documents', self.corpus_file, corpus_format, context)
     for name in ('word-map', 'lcword-map', 'tag-map',
                  'category-map', 'label-map', 'prefix-table',
-                 'suffix-table', 'tag-to-category', 'char-map'):
+                 'suffix-table', 'tag-to-category', 'char-map',
+                 'morph-label-set', 'morphology-map', 'char-ngram-map'):
       self.AddInput(name, os.path.join(FLAGS.test_tmpdir, name), '', context)
     logging.info('Writing context to: %s', self.context_file)
     with open(self.context_file, 'w') as f:

@@ -1,8 +1,6 @@
 #!/bin/bash
-"""
-Originally from https://github.com/dsindex/syntaxnet
-Modified to include changes from https://github.com/tensorflow/models/issues/830
-"""
+#Originally from https://github.com/dsindex/syntaxnet
+#Modified to include changes from https://github.com/tensorflow/models/issues/830
 
 set -o nounset
 set -o errexit
@@ -117,7 +115,7 @@ python=/usr/bin/python
 SYNTAXNET_HOME=${PDIR}
 BINDIR=$SYNTAXNET_HOME/bazel-bin/syntaxnet
 
-CORPUS_DIR=${CDIR}/UD_English
+CORPUS_DIR=${CDIR}/UD_Danish
 
 CONTEXT=${CORPUS_DIR}/context.pbtxt
 TMP_DIR=${CORPUS_DIR}/tmp/syntaxnet-output

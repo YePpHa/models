@@ -130,7 +130,7 @@ class LexiconBuilder : public OpKernel {
           const string c_str = c.ToString();
           if (!c_str.empty() && !HasSpaces(c_str)) chars.Increment(c_str);
         }
-        
+
         const TokenMorphology &token_morphology = token.GetExtension(TokenMorphology::morphology);
         for (const TokenMorphology::Attribute &att : token_morphology.attribute()) {
           morphs.Increment(tensorflow::strings::StrCat(att.name(), "=", att.value()));
