@@ -276,7 +276,9 @@ def main(unused_argv):
   if FLAGS.projectivize_training_set:
     logging.info('Preprocessing...')
     with tf.Session(FLAGS.tf_master) as sess:
+      unused_text_input = tf.constant([], tf.string)
       source, last = gen_parser_ops.document_source(
+          text=unused_text_input,
           task_context=OutputPath('context'),
           batch_size=FLAGS.batch_size,
           corpus_name=FLAGS.training_corpus)

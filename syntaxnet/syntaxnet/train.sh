@@ -188,7 +188,7 @@ function train_pos_tagger {
 }
 
 function preprocess_with_tagger {
-	for SET in training tuning test; do
+	for SET in training tuning dev; do
 		${BINDIR}/parser_eval \
 		--task_context=${TMP_DIR}/brain_pos/greedy/${POS_PARAMS}/context \
 		--hidden_layer_sizes=${POS_HIDDEN_LAYER_SIZES} \
@@ -226,7 +226,7 @@ function pretrain_parser {
 }
 
 function evaluate_pretrained_parser {
-	for SET in training tuning test; do
+	for SET in training tuning dev; do
 		${BINDIR}/parser_eval \
 		--task_context=${TMP_DIR}/brain_parser/greedy/${LP_PARAMS}/context \
 		--hidden_layer_sizes=${PARSER_HIDDEN_LAYER_SIZES} \
@@ -266,7 +266,7 @@ function train_parser {
 }
 
 function evaluate_parser {
-	for SET in training tuning test; do
+	for SET in training tuning dev; do
 		${BINDIR}/parser_eval \
 		--task_context=${TMP_DIR}/brain_parser/structured/${GP_PARAMS}/context \
 		--hidden_layer_sizes=${PARSER_HIDDEN_LAYER_SIZES} \
@@ -293,7 +293,7 @@ function copy_model {
 }
 
 convert_corpus ${CORPUS_DIR}
-train_morpher
+#train_morpher
 train_pos_tagger
 preprocess_with_tagger
 pretrain_parser
