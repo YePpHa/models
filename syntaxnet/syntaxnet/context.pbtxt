@@ -166,7 +166,7 @@ input {
 }
 input {
   name: 'morphed-dev-corpus'
-  creator: 'brain_parser/greedy'
+  creator: 'brain_morpher/greedy'
   record_format: 'conll-sentence'
 }
 input {
@@ -219,6 +219,54 @@ input {
 input {
   name: 'tag-to-category'
   creator: 'brain_pos/greedy'
+}
+input {
+  name: 'morph-label-set'
+  creator: 'brain_pos/greedy'
+}
+input {
+  name: 'morphology-map'
+  creator: 'brain_pos/greedy'
+}
+input {
+  name: 'char-ngram-map'
+  creator: 'brain_pos/greedy'
+}
+input {
+  name: 'label-map'
+  creator: 'brain_morpher/greedy'
+}
+input {
+  name: 'word-map'
+  creator: 'brain_morpher/greedy'
+}
+input {
+  name: 'lcword-map'
+  creator: 'brain_morpher/greedy'
+}
+input {
+  name: 'tag-map'
+  creator: 'brain_morpher/greedy'
+}
+input {
+  name: 'category-map'
+  creator: 'brain_morpher/greedy'
+}
+input {
+  name: 'char-map'
+  creator: 'brain_morpher/greedy'
+}
+input {
+  name: 'prefix-table'
+  creator: 'brain_morpher/greedy'
+}
+input {
+  name: 'suffix-table'
+  creator: 'brain_morpher/greedy'
+}
+input {
+  name: 'tag-to-category'
+  creator: 'brain_morpher/greedy'
 }
 input {
   name: 'morph-label-set'
