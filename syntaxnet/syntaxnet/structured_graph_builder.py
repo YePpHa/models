@@ -152,7 +152,7 @@ class StructuredGraphBuilder(graph_builder.GreedyParser):
       n = self.training
       n['accumulated_alive_steps'] = self._AddVariable(
           [batch_size], tf.int32, 'accumulated_alive_steps',
-          tf.zeros_initializer)
+          tf.zeros_initializer())
       n.update(self._AddBeamReader(task_context, batch_size, corpus_name))
       # This adds a required 'step' node too:
       learning_rate = tf.constant(learning_rate, dtype=tf.float32)
@@ -208,7 +208,7 @@ class StructuredGraphBuilder(graph_builder.GreedyParser):
       for param in trainable_params.values():
         slot = optimizer.get_slot(param, 'momentum')
         self.inits[slot.name] = state_ops.init_variable(slot,
-                                                        tf.zeros_initializer)
+                                                        tf.zeros_initializer())
         self.variables[slot.name] = slot
 
       def NumericalChecks():
